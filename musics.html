@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css"     integrity="sha512-MV7K8+y+gLIBoVD59lQIYicR65iaqukzvf/nwasF0nqhPay5w/9lJmVM2hMDcnK1OnMGCdVK+iQrJ7lzPJQd1w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <script src="js/jquery.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="css/style.css">
+    <title>Document</title>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+          <a class="navbar-brand" href="#">Music List</a>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+              <li class="nav-item">
+                <a class="nav-link" href="index.html">Home</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="musics.html">Music</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="composers.html">Composers</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+    </nav>
+
+    <div class="container mt-3">
+        <div class="container-fluid">
+            <div class="row">
+              <div class="col-md-12">
+                <nav>
+                  <ol class="breadcrumb mt-3">
+                    <li class="breadcrumb-item">
+                      <a href="index.html">Home</a>
+                    </li>
+                    <li class="breadcrumb-item active">
+                      <a href="composers.html">Composers</a>
+                    </li>
+                    <li class="breadcrumb-item active">
+                      <a>musics</a>
+                    </li>
+                    <!-- <li class="breadcrumb-item">
+                      <a>View Accounts</a>
+                    </li> -->
+                    <!-- <li class="breadcrumb-item active">
+                      Dat
+                    </li> -->
+                  </ol>
+                </nav>
+              </div>
+                <div class="col-md-12 d-flex justify-content-between">
+                    <h2 class="float-start text-center bg-warning rounded p-3 w-75">Musics</h2>
+                    <button type="button" class="btn btn-primary float-end mb-2" data-bs-toggle="modal" data-bs-target="#addMusicModal">
+                      <i class="fa fa-plus"></i> Add Music
+                    </button>
+
+                      <!-- Modal -->
+                      <div class="modal fade" id="addMusicModal" tabindex="-1" aria-labelledby="addMusicModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                          <div class="modal-content">
+                            <div class="modal-header">
+                              <h1 class="modal-title fs-5" id="createCustomerModalLabel">Add New Music</h1>
+                              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                              
+                              <div class="mb-3">
+                                <label for="cid">CID</label>
+                                <input type="number" id="cid" class="form-control">
+                              </div>
+                    
+                              <div class="mb-3">
+                                <label for="name">Name</label>
+                                <input type="text" id="name" class="form-control">
+                              </div>
+                    
+                              <div class="mb-3">
+                                <label for="release">Release</label>
+                                <input type="date" id="release" class="form-control">
+                              </div>
+                              <div class="mb-3">
+                                <label for="album">Album</label>
+                                <input type="text" id="album" class="form-control">
+                              </div>
+                              <div class="mb-3">
+                                <label for="genre">Genre</label>
+                                <input type="text" id="genre" class="form-control">
+                              </div>
+                
+                            </div>
+                            <div class="modal-footer">
+                              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                              <button type="button" class="btn btn-primary" id="save_btn">Add Music</button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+
+                </div>
+                <div class="col-md-12">
+                    <hr>
+                    <table class="table">
+                        <thead class="bg-dark text-white">
+                          <tr>
+                            <th>#</th>
+                            <th>Song Name</th>
+                            <th>Release</th>
+                            <th>Album</th>
+                            <th>Genre</th>
+                            <th class="text-center">...</th>
+                          </tr>
+                        </thead>
+                        <tbody id="musics"></tbody>
+                      </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+      function getAllMusics() {
+        fetch("http://localhost:8000/api/musics")
+          .then(response=>{
+            if(response.status==200) {
+              response.json()
+                .then(data=>{
+                  renderMusics(data.musics)
+                })
+            }
+          })
+      }
+
+      function renderMusics(musics) {
+        const tbody = $("#musics")
+
+        musics.forEach((ms)=>{
+          const tr = $(document.createElement("tr"))
+            console.log(ms)
+          tr.append("<td>" + ms.id + "</td>")
+          tr.append("<td>" + ms.name + "</td>")
+          tr.append("<td>" + new Date(Date.parse(ms.release)).getFullYear() + "</td>")
+          tr.append("<td>" + ms.album + "</td>")
+          tr.append("<td>" + ms.genre + "</td>")
+          
+          tr.append("<td class='text-center'><a href='show_music.html?id=" + ms.id + "' class='btn btn-sm btn-info'><i class='fa fa-eye'></i></a>")
+          
+          tbody.append(tr)
+        })
+        }
+
+      function clearForm() {
+        $("#cid").val(null)
+        $("#name").val(null)
+        $("#release").val(null)
+        $("#album").val(null)
+        $("#genre").val(null)
+      }
+
+      $(document).ready(()=>{
+        getAllMusics()
+
+        $("#save_btn").click(()=>{
+            const data = {
+                "cid":$("#cid").val(),
+                "name":$("#name").val(),
+                "release":$("#release").val(),
+                "album":$("#album").val(),
+                "genre":$("#genre").val(),
+            }
+
+            fetch("http://localhost:8000/api/musics",{
+                credentials: "omit",
+                method: "POST",
+                body: JSON.stringify(data),
+                headers:{
+                'Accept':'application/json',
+                'Content-Type':'application/json'
+                }
+            }).then(response=>{
+                if(response.status==200) {
+                alert('Successfully added a new account')
+                window.location='musics.html'
+                }
+            })
+
+            clearForm()
+            $("#addMusicModal").modal('hide')
+          })
+      })
+    </script>
+</body>
+</html>
